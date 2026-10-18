@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Biblioteca Pro HTML</title>
+  <meta name="description" content="Biblioteca de componentes HTML, CSS y JavaScript en español, organizada por categorías, con vista previa y código listo para copiar.">
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <a class="salto" href="#contenido">Saltar al contenido</a>
+
+  <header class="cabecera">
+    <button class="boton-menu" id="botonMenu" aria-label="Abrir categorías" aria-expanded="false">☰</button>
+    <div class="marca">
+      <span class="marca-logo">&lt;/&gt;</span>
+      <div>
+        <h1>Biblioteca Pro HTML</h1>
+        <p>Componentes listos para copiar, en español</p>
+      </div>
+    </div>
+    <div class="buscador">
+      <label for="buscar" class="solo-lectores">Buscar componentes</label>
+      <input type="search" id="buscar" placeholder="Buscar por nombre, etiqueta o autor…" autocomplete="off">
+    </div>
+    <button class="boton-tema" id="botonTema" aria-label="Cambiar tema claro/oscuro">🌙</button>
+  </header>
+
+  <div class="disposicion">
+    <aside class="lateral" id="lateral" aria-label="Categorías">
+      <h2>Categorías</h2>
+      <nav id="listaCategorias"></nav>
+      <div class="lateral-pie">
+        <p><strong id="totalComponentes">0</strong> componentes</p>
+        <p class="nota">Cada componente indica su autor y licencia.</p>
+      </div>
+    </aside>
+
+    <main class="principal" id="contenido">
+      <div class="barra-resultados">
+        <h2 id="tituloSeccion">Todos los componentes</h2>
+        <span id="contadorResultados" role="status" aria-live="polite"></span>
+      </div>
+      <div class="cuadricula" id="cuadricula"></div>
+      <p class="vacio" id="mensajeVacio" hidden>No se encontraron componentes. Prueba con otra búsqueda o categoría.</p>
+    </main>
+  </div>
+
+  <!-- Ventana de detalle -->
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitulo" hidden>
+    <div class="modal-caja">
+      <div class="modal-cabecera">
+        <div>
+          <h3 id="modalTitulo"></h3>
+          <p id="modalDescripcion"></p>
+        </div>
+        <button class="cerrar" id="cerrarModal" aria-label="Cerrar">✕</button>
+      </div>
+
+      <div class="modal-cuerpo">
+        <section class="vista">
+          <div class="vista-herramientas">
+            <span>Vista previa</span>
+            <div class="grupo-botones" role="group" aria-label="Tamaño de la vista previa">
+              <button data-ancho="100%" class="activo">Escritorio</button>
+              <button data-ancho="768px">Tableta</button>
+              <button data-ancho="375px">Móvil</button>
+            </div>
+          </div>
+          <div class="vista-marco"><iframe id="vistaPrevia" title="Vista previa del componente" sandbox="allow-scripts"></iframe></div>
+        </section>
+
+        <section class="codigo">
+          <div class="pestanas" role="tablist">
+            <button role="tab" data-lenguaje="html" class="activo">HTML</button>
+            <button role="tab" data-lenguaje="css">CSS</button>
+            <button role="tab" data-lenguaje="js">JavaScript</button>
+          </div>
+          <pre><code id="bloqueCodigo"></code></pre>
+          <div class="acciones">
+            <button id="copiarCodigo" class="primario">Copiar código</button>
+            <button id="descargarPagina">Descargar como página</button>
+          </div>
+          <dl class="ficha">
+            <div><dt>Categoría</dt><dd id="fichaCategoria"></dd></div>
+            <div><dt>Nivel</dt><dd id="fichaNivel"></dd></div>
+            <div><dt>Autor</dt><dd id="fichaAutor"></dd></div>
+            <div><dt>Licencia</dt><dd id="fichaLicencia"></dd></div>
+            <div><dt>Etiquetas</dt><dd id="fichaEtiquetas"></dd></div>
+          </dl>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <div class="aviso" id="aviso" role="status" aria-live="polite" hidden></div>
+
+  <script src="js/datos/componentes.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
