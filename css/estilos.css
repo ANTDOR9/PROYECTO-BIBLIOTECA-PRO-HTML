@@ -148,6 +148,13 @@ textarea { resize: vertical; }
 
 /* 5b. Vista de biblioteca (pantalla completa) ------------- */
 .biblioteca-btn { display: inline-flex; align-items: center; gap: 8px; border-color: var(--acento); font-weight: 600; white-space: nowrap; }
+.pro-btn { border-color: #e8b931; color: #f5c84b; font-weight: 600; white-space: nowrap; }
+:root[data-tema="claro"] .pro-btn { color: #9a6b00; }
+body[data-vista="biblioteca"] .pro-btn { display: none; }
+.conjuntos { display: inline-flex; margin-top: 10px; }
+.gal-mini.con-imagen img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.gal-credito { font-size: .74rem; }
+.gal-credito a { color: var(--acento-2); }
 .biblioteca-btn .bb-volver { display: none; }
 body[data-vista="biblioteca"] .biblioteca-btn .bb-volver { display: inline; }
 body[data-vista="biblioteca"] .biblioteca-btn .bb-ir { display: none; }

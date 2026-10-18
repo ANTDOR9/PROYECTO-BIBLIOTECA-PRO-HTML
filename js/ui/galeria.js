@@ -7,12 +7,15 @@
   'use strict';
   var BP = window.BP = window.BP || {};
 
-  var estado = { busqueda: '', categoria: 'Todas' };
+  var estado = { busqueda: '', categoria: 'Todas', conjunto: 'base' };
+
+  function coleccion() { return estado.conjunto === 'pro' ? BP.bloquesPro : BP.bloques; }
+  function categorias() { return estado.conjunto === 'pro' ? BP.categoriasPro() : BP.categorias; }
   var observador = null;
 
   function filtrar() {
     var q = BP.biblioteca.normalizar(estado.busqueda);
-    return BP.bloques.filter(function (b) {
+    return coleccion().filter(function (b) {
       if (estado.categoria !== 'Todas' && b.categoria !== estado.categoria) return false;
       if (!q) return true;
       return BP.biblioteca.normalizar([b.nombre, b.descripcion, b.categoria, b.etiquetas.join(' ')].join(' ')).indexOf(q) !== -1;
@@ -22,8 +25,8 @@
   function pintarCategorias() {
     var cont = BP.$('galeriaCategorias');
     cont.innerHTML = '';
-    ['Todas'].concat(BP.categorias).forEach(function (c) {
-      var n = c === 'Todas' ? BP.bloques.length : BP.bloques.filter(function (b) { return b.categoria === c; }).length;
+    ['Todas'].concat(categorias()).forEach(function (c) {
+      var n = c === 'Todas' ? coleccion().length : coleccion().filter(function (b) { return b.categoria === c; }).length;
       var b = document.createElement('button');
       b.type = 'button'; b.className = 'chip' + (c === estado.categoria ? ' activo' : '');
       b.textContent = c + ' · ' + n;
@@ -41,11 +44,27 @@
     c.className = 'gal-card'; c.dataset.id = def.id;
 
     var mini = document.createElement('div'); mini.className = 'gal-mini';
-    var f = document.createElement('iframe');
-    f.tabIndex = -1; f.title = 'Vista previa de ' + def.nombre; f.setAttribute('aria-hidden', 'true');
-    f.dataset.doc = BP.biblioteca.documentoMiniatura(def);
-    if (observador) observador.observe(f); else f.srcdoc = f.dataset.doc;
-    mini.appendChild(f);
+    if (def.miniatura) {
+      var im = document.createElement('img');
+      im.src = def.miniatura; im.alt = 'Vista previa de ' + def.nombre; im.loading = 'lazy';
+      mini.classList.add('con-imagen'); mini.appendChild(im);
+    } else {
+      var f = document.createElement('iframe');
+      f.tabIndex = -1; f.title = 'Vista previa de ' + def.nombre; f.setAttribute('aria-hidden', 'true');
+      f.dataset.doc = BP.biblioteca.documentoMiniatura(def);
+      /* Los bloques bajitos (botones, separadores…) recortan el espacio en blanco de la vista previa */
+      f.addEventListener('load', function () {
+        try {
+          var h = f.contentDocument.body.scrollHeight;
+          if (h && h < BP.biblioteca.ALTO) {
+            var esc = parseFloat(BP.$('galeriaRejilla').style.getPropertyValue('--esc')) || 0.3;
+            mini.style.height = Math.max(70, Math.round((h + 4) * esc)) + 'px';
+          }
+        } catch (e) {}
+      });
+      if (observador) observador.observe(f); else f.srcdoc = f.dataset.doc;
+      mini.appendChild(f);
+    }
 
     var info = document.createElement('div'); info.className = 'gal-info';
     var cab = document.createElement('div'); cab.className = 'gal-cab';
@@ -60,7 +79,17 @@
     var usado = document.createElement('span'); usado.className = 'gal-usado';
     acc.appendChild(add); acc.appendChild(ver); acc.appendChild(usado);
 
-    info.appendChild(cab); info.appendChild(d); info.appendChild(acc);
+    info.appendChild(cab); info.appendChild(d);
+    if (def.fuente) {
+      var cr = document.createElement('p'); cr.className = 'gal-credito';
+      cr.appendChild(document.createTextNode('Autor: ' + def.autor + ' · Licencia ' + def.licencia + ' · '));
+      if (/^https?:\/\//.test(def.urlFuente || '')) {
+        var a = document.createElement('a'); a.href = def.urlFuente; a.target = '_blank'; a.rel = 'noopener noreferrer';
+        a.textContent = 'Original en ' + def.fuente; cr.appendChild(a);
+      } else cr.appendChild(document.createTextNode(def.fuente));
+      info.appendChild(cr);
+    }
+    info.appendChild(acc);
     c.appendChild(mini); c.appendChild(info);
 
     add.addEventListener('click', function () {
@@ -86,7 +115,10 @@
     var lista = filtrar();
     if (!lista.length) {
       var v = document.createElement('p');
-      v.className = 'bv-vacio'; v.textContent = 'No hay bloques que coincidan con tu búsqueda.';
+      v.className = 'bv-vacio';
+      v.textContent = estado.conjunto === 'pro' && !BP.bloquesPro.length
+        ? 'La biblioteca Pro todavía está vacía. Aquí aparecerán los bloques adaptados de ejemplos externos, con su autor y enlace original.'
+        : 'No hay bloques que coincidan con tu búsqueda.';
       cont.appendChild(v); return;
     }
     if (observador) observador.disconnect();
@@ -110,7 +142,16 @@
     r.style.setProperty('--alto-mini', Math.round(BP.biblioteca.ALTO * esc) + 'px');
   }
 
-  function abrir() {
+  function elegirConjunto(c) {
+    estado.conjunto = c; estado.categoria = 'Todas';
+    [].forEach.call(document.querySelectorAll('#galeriaConjuntos button'), function (b) {
+      b.classList.toggle('activo', b.dataset.conjunto === c);
+    });
+    pintarCategorias(); pintar();
+  }
+
+  function abrir(conjunto) {
+    if (conjunto === 'base' || conjunto === 'pro') elegirConjunto(conjunto);
     document.body.dataset.vista = 'biblioteca';
     BP.$('vistaBiblioteca').hidden = false;
     BP.emitir('cerrar-paneles');
@@ -122,7 +163,7 @@
     BP.$('vistaBiblioteca').hidden = true;
     setTimeout(BP.lienzo.ubicarBarra, 60);
   }
-  function alternar() { if (document.body.dataset.vista === 'biblioteca') cerrar(); else abrir(); }
+  function alternar() { if (document.body.dataset.vista === 'biblioteca') cerrar(); else abrir('base'); }
 
   BP.galeria = {
     iniciar: function () {
@@ -130,7 +171,11 @@
       pintarCategorias(); pintar();
       BP.$('galeriaBuscar').addEventListener('input', function (e) { estado.busqueda = e.target.value; pintar(); });
       BP.$('btnBiblioteca').addEventListener('click', alternar);
-      BP.$('btnBibliotecaPanel').addEventListener('click', abrir);
+      BP.$('btnBibliotecaPanel').addEventListener('click', function () { abrir('base'); });
+      BP.$('btnPro').addEventListener('click', function () { abrir('pro'); });
+      [].forEach.call(document.querySelectorAll('#galeriaConjuntos button'), function (b) {
+        b.addEventListener('click', function () { elegirConjunto(b.dataset.conjunto); });
+      });
       BP.$('galeriaVolver').addEventListener('click', cerrar);
       document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape' && document.body.dataset.vista === 'biblioteca' && BP.$('modal').hidden) cerrar();

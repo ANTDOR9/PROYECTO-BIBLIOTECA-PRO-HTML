@@ -503,11 +503,12 @@
   ];
 
   BP.bloque = function (id) {
-    for (var i = 0; i < BP.bloques.length; i++) { if (BP.bloques[i].id === id) return BP.bloques[i]; }
+    var todos = BP.bloques.concat(BP.bloquesPro || []);
+    for (var i = 0; i < todos.length; i++) { if (todos[i].id === id) return todos[i]; }
     return null;
   };
 
   BP.todoCSSBloques = function () {
-    return BP.bloques.map(function (b) { return b.css; }).join('\n');
+    return BP.bloques.concat(BP.bloquesPro || []).map(function (b) { return b.css; }).join('\n');
   };
 })();

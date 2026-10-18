@@ -23,6 +23,8 @@
       <span class="cuenta" id="cuentaBarra">0</span>
     </button>
 
+    <button class="btn pro-btn" id="btnPro" title="Abrir la biblioteca Pro: bloques adaptados de ejemplos externos">⭐ Biblioteca Pro</button>
+
     <div class="grupo" id="grupoVista" role="group" aria-label="Tamaño de pantalla">
       <button data-ancho="100%" class="activo" title="Escritorio">🖥 <span>Escritorio</span></button>
       <button data-ancho="768px" title="Tableta">▭ <span>Tableta</span></button>
@@ -109,7 +111,11 @@
     <div class="bv-cabecera">
       <div>
         <h2>Biblioteca de bloques</h2>
-        <p>Explora todos los bloques y añade los que quieras a tu página. Vuelve al editor cuando termines.</p>
+        <p>Explora los bloques y añade los que quieras a tu página. Vuelve al editor cuando termines.</p>
+        <div class="grupo conjuntos" id="galeriaConjuntos" role="group" aria-label="Colección">
+          <button data-conjunto="base" class="activo">Esenciales</button>
+          <button data-conjunto="pro">⭐ Pro</button>
+        </div>
       </div>
       <div class="bv-filtros">
         <label class="solo-lectores" for="galeriaBuscar">Buscar bloques</label>
@@ -151,6 +157,7 @@
   <!-- Datos -->
   <script src="js/datos/base.js"></script>
   <script src="js/datos/componentes.js"></script>
+  <script src="js/datos/pro.js"></script>
   <!-- Núcleo -->
   <script src="js/nucleo/utilidades.js"></script>
   <script src="js/nucleo/exportar.js"></script>
