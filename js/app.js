@@ -20,6 +20,7 @@
       BP.capas.iniciar();
       BP.props.iniciar();
       BP.codigo.iniciar();
+      BP.galeria.iniciar();
       BP.barra.iniciar();
       BP.emitir('cambio');
     });

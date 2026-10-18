@@ -145,6 +145,48 @@ textarea { resize: vertical; }
 .mini:hover { border-color: var(--acento); }
 .mini.primario { background: var(--acento); border-color: var(--acento); color: #fff; font-weight: 600; }
 
+
+/* 5b. Vista de biblioteca (pantalla completa) ------------- */
+.biblioteca-btn { display: inline-flex; align-items: center; gap: 8px; border-color: var(--acento); font-weight: 600; white-space: nowrap; }
+.biblioteca-btn .bb-volver { display: none; }
+body[data-vista="biblioteca"] .biblioteca-btn .bb-volver { display: inline; }
+body[data-vista="biblioteca"] .biblioteca-btn .bb-ir { display: none; }
+body[data-vista="biblioteca"] .area,
+body[data-vista="biblioteca"] #grupoVista,
+body[data-vista="biblioteca"] #grupoModo,
+body[data-vista="biblioteca"] #btnDeshacer,
+body[data-vista="biblioteca"] #btnRehacer,
+body[data-vista="biblioteca"] #btnProbar,
+body[data-vista="biblioteca"] .solo-estrecho { display: none; }
+.biblioteca-vista { flex: 1; display: flex; flex-direction: column; min-height: 0; background: var(--fondo); }
+.bv-cabecera { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; padding: 20px 28px 10px; }
+.bv-cabecera h2 { font-size: 1.4rem; }
+.bv-cabecera p { margin-top: 4px; color: var(--texto-suave); font-size: .88rem; }
+.bv-filtros { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.bv-filtros input { width: 260px; max-width: 100%; padding: 8px 12px; border: 1px solid var(--borde); border-radius: 9px; background: var(--superficie); color: var(--texto); font: inherit; }
+.bv-categorias { display: flex; gap: 8px; flex-wrap: wrap; padding: 6px 28px 14px; }
+.chip { padding: 6px 14px; border: 1px solid var(--borde); border-radius: 99px; background: var(--superficie); font-size: .82rem; }
+.chip:hover { border-color: var(--acento); }
+.chip.activo { background: var(--acento); border-color: var(--acento); color: #fff; font-weight: 600; }
+.bv-cuerpo { flex: 1; overflow: auto; padding: 4px 28px 32px; }
+.bv-rejilla { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px; }
+.bv-vacio { grid-column: 1 / -1; padding: 40px 0; text-align: center; color: var(--texto-suave); }
+.gal-card { display: flex; flex-direction: column; border: 1px solid var(--borde); border-radius: 14px; background: var(--superficie); overflow: hidden; transition: border-color .15s, transform .15s; }
+.gal-card:hover { border-color: var(--acento); transform: translateY(-2px); }
+.gal-mini { position: relative; height: var(--alto-mini, 180px); overflow: hidden; background: #fff; pointer-events: none; border-bottom: 1px solid var(--borde); }
+.gal-mini iframe { position: absolute; top: 0; left: 0; width: 1200px; height: 620px; border: 0; transform: scale(var(--esc, .3)); transform-origin: 0 0; }
+.gal-info { display: grid; gap: 6px; padding: 14px 16px 16px; }
+.gal-cab { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.gal-cab h3 { font-size: 1rem; }
+.gal-info p { font-size: .82rem; color: var(--texto-suave); }
+.gal-acciones { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 6px; }
+.gal-usado { margin-left: auto; font-size: .76rem; color: var(--exito); font-weight: 600; }
+@media (max-width: 720px) {
+  .bv-cabecera, .bv-categorias, .bv-cuerpo { padding-left: 16px; padding-right: 16px; }
+  .bv-rejilla { grid-template-columns: 1fr; }
+  .biblioteca-btn .bb-ir, .biblioteca-btn .bb-volver { font-size: .8rem; }
+}
+
 /* 6. Capas ------------------------------------------------ */
 .lista-capas { display: grid; gap: 6px; }
 .capa {

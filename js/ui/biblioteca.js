@@ -156,7 +156,7 @@
       pintarFiltro(); pintar();
       BP.$('cerrarModal').addEventListener('click', cerrarModal);
       BP.$('modal').addEventListener('click', function (e) { if (e.target === BP.$('modal')) cerrarModal(); });
-      document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !BP.$('modal').hidden) cerrarModal(); });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !BP.$('modal').hidden) { e.stopImmediatePropagation(); cerrarModal(); } });
       [].forEach.call(document.querySelectorAll('[data-modal]'), function (b) {
         b.addEventListener('click', function () { modalLeng = b.dataset.modal; pintarModal(); });
       });
@@ -175,6 +175,10 @@
         });
       }, 250));
     },
-    ajustarEscala: ajustarEscala
+    ajustarEscala: ajustarEscala,
+    normalizar: normalizar,
+    documentoMiniatura: documentoMiniatura,
+    abrirModal: abrirModal,
+    ANCHO: ANCHO_MINIATURA, ALTO: ALTO_MINIATURA
   };
 })();

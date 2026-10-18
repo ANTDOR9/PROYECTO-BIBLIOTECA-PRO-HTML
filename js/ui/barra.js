@@ -100,7 +100,7 @@
       BP.$('velo').addEventListener('click', cerrarPaneles);
       BP.on('cerrar-paneles', cerrarPaneles);
       BP.on('seleccion', function (el) {
-        if (el && window.matchMedia('(max-width:1100px)').matches) {
+        if (el && document.body.dataset.vista !== 'biblioteca' && window.matchMedia('(max-width:1100px)').matches) {
           cerrarPaneles(); BP.$('panelDer').classList.add('abierto'); BP.$('velo').hidden = false;
         }
       });
