@@ -5,11 +5,12 @@ Editor visual para armar páginas web con bloques, al estilo Elementor u Odoo. T
 ## Cómo usarlo
 
 1. Abre `index.html` en el navegador (doble clic).
-2. **Panel izquierdo – Bloques**: biblioteca de elementos. Haz clic o arrastra un bloque a la página. "Ver código" muestra su HTML/CSS.
-3. **Centro**: la página que estás construyendo. Haz clic en un elemento para seleccionarlo; doble clic para editar el texto. El asa ⠿ de la barra flotante permite arrastrar el bloque para reordenarlo.
-4. **Panel derecho**: propiedades del elemento (texto, enlace, imagen, colores, espaciado, tamaño). Sin selección, muestra el tema global (colores, fuente, radio).
-5. **Capas**: lista de bloques para reordenar, duplicar o eliminar.
-6. **Barra superior**: Escritorio/Tableta/Móvil, modo Visual/Dividido/Código, deshacer/rehacer (Ctrl+Z / Ctrl+Y), Probar, Descargar `pagina.html`.
+2. **Botón "Ir a biblioteca"** (barra superior o panel izquierdo): abre la biblioteca a pantalla completa con vistas grandes, búsqueda y categorías. Cada bloque tiene "+ Añadir a mi página" y "Ver código"; "Volver al editor" (o Esc) regresa al lienzo.
+3. **Panel izquierdo – Bloques**: biblioteca de elementos. Haz clic o arrastra un bloque a la página. "Ver código" muestra su HTML/CSS.
+4. **Centro**: la página que estás construyendo. Haz clic en un elemento para seleccionarlo; doble clic para editar el texto. El asa ⠿ de la barra flotante permite arrastrar el bloque para reordenarlo.
+5. **Panel derecho**: propiedades del elemento (texto, enlace, imagen, colores, espaciado, tamaño). Sin selección, muestra el tema global (colores, fuente, radio).
+6. **Capas**: lista de bloques para reordenar, duplicar o eliminar.
+7. **Barra superior**: Escritorio/Tableta/Móvil, modo Visual/Dividido/Código, deshacer/rehacer (Ctrl+Z / Ctrl+Y), Probar, Descargar `pagina.html`.
 
 El trabajo se guarda solo en el navegador (localStorage).
 
@@ -22,7 +23,7 @@ js/app.js                  Arranque
 js/datos/base.js           Tema y CSS base de las páginas
 js/datos/componentes.js    Categorías y bloques de la biblioteca
 js/nucleo/                 Utilidades, exportación, historial, lienzo
-js/ui/                     Biblioteca, capas, propiedades, código, barra
+js/ui/                     Biblioteca (panel), galería (pantalla completa), capas, propiedades, código, barra
 ```
 
 ## Cómo agregar un bloque nuevo
