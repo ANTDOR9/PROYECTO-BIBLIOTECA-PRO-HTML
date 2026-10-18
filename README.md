@@ -40,3 +40,12 @@ En `js/datos/componentes.js`, añade un objeto a `BP.bloques`:
 - Editar el código y aplicarlo al lienzo.
 - Más bloques y plantillas de página completas.
 - Importador de ejemplos de FreeFrontend (respetando autor y licencia).
+
+## Pendientes
+
+- **Importar ejemplos de FreeFrontend a la biblioteca Pro** (por categorías, empezando por Botones).
+  FreeFrontend solo enlaza a CodePen, así que cada ejemplo se adapta a mano: se toma el HTML/CSS del pen,
+  se convierte al formato de bloque y se guarda en `js/datos/pro.js` con `autor`, `licencia`, `fuente` y `urlFuente`.
+  Solo se incluyen los que tengan licencia clara.
+- Código editable en el panel y aplicarlo al lienzo.
+- Más bloques y plantillas de página completas.

@@ -194,6 +194,45 @@ body[data-vista="biblioteca"] .solo-estrecho { display: none; }
   .biblioteca-btn .bb-ir, .biblioteca-btn .bb-volver { font-size: .8rem; }
 }
 
+/* 5c. Asistente IA (botón flotante + chat) ---------------- */
+.ia-btn { position: fixed; right: 20px; bottom: 20px; z-index: 45; display: inline-flex; align-items: center; gap: 8px; padding: 12px 18px; border: 0; border-radius: 99px; background: linear-gradient(135deg, var(--acento), var(--acento-2)); color: #fff; font-weight: 700; box-shadow: var(--sombra); transition: transform .15s; }
+.ia-btn:hover { transform: translateY(-2px); }
+.ia-btn[data-modo="interprete"] { background: linear-gradient(135deg, #ff4d5e, #c81e3a); }
+.ia-panel { --ia-acento: var(--acento); position: fixed; right: 20px; bottom: 80px; z-index: 46; display: flex; flex-direction: column; width: min(400px, calc(100vw - 24px)); height: min(580px, calc(100vh - 110px)); border: 1px solid var(--borde); border-radius: 16px; background: var(--superficie); box-shadow: var(--sombra); overflow: hidden; }
+.ia-panel[data-modo="interprete"] { --ia-acento: #ff4d5e; border-color: #ff4d5e; box-shadow: 0 10px 34px rgba(255, 77, 94, .3); }
+.ia-cab { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-bottom: 1px solid var(--borde); }
+.ia-panel[data-modo="interprete"] .ia-cab { background: color-mix(in srgb, #ff4d5e 14%, var(--superficie)); }
+.ia-titulo { display: grid; flex: 1; min-width: 0; line-height: 1.2; }
+.ia-estado { font-size: .72rem; color: var(--peligro); }
+.ia-estado.ok { color: var(--exito); }
+.ia-modos button { padding: 5px 9px; font-size: .76rem; }
+.ia-panel[data-modo="interprete"] .ia-modos button.activo { background: #ff4d5e; }
+.ia-potente { padding: 6px 12px; background: #ff4d5e; color: #fff; font-size: .7rem; font-weight: 700; letter-spacing: .03em; }
+.ia-mensajes { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 14px 12px; }
+.ia-msg { max-width: 88%; padding: 9px 12px; border-radius: 12px; font-size: .86rem; line-height: 1.4; white-space: pre-wrap; overflow-wrap: anywhere; }
+.ia-usuario { align-self: flex-end; background: var(--ia-acento); color: #fff; border-bottom-right-radius: 4px; }
+.ia-ia { align-self: flex-start; background: var(--superficie-2); border-bottom-left-radius: 4px; }
+.ia-sistema { align-self: stretch; max-width: 100%; border: 1px dashed var(--borde); color: var(--texto-suave); font-size: .8rem; }
+.ia-etiqueta { display: block; margin-bottom: 2px; font-size: .68rem; font-weight: 700; color: var(--ia-acento); }
+.ia-vacio { display: grid; gap: 10px; padding: 8px 4px; color: var(--texto-suave); font-size: .86rem; justify-items: start; }
+.ia-nota { font-size: .78rem; }
+.ia-plan { align-self: stretch; padding: 10px 12px; border: 1px solid var(--ia-acento); border-radius: 12px; background: var(--superficie-2); font-size: .82rem; }
+.ia-plan ul { margin: 8px 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+.ia-plan li { display: flex; gap: 6px; }
+.ia-plan .bien .ia-marca { color: var(--exito); }
+.ia-plan .mal { color: var(--peligro); }
+.ia-plan em { font-style: normal; opacity: .9; }
+.ia-plan-acc { display: flex; gap: 8px; }
+.ia-deshacer { margin-top: 8px; }
+.ia-form { display: flex; gap: 8px; align-items: flex-end; padding: 10px 12px; border-top: 1px solid var(--borde); }
+.ia-form textarea { flex: 1; resize: none; padding: 8px 10px; border: 1px solid var(--borde); border-radius: 10px; background: var(--superficie-2); color: var(--texto); font: inherit; font-size: .86rem; }
+.ia-panel[data-modo="interprete"] .ia-form .btn.primario { background: #ff4d5e; border-color: #ff4d5e; }
+body[data-vista="biblioteca"] .ia-btn, body[data-vista="biblioteca"] .ia-panel { display: none; }
+@media (max-width: 720px) {
+  .ia-btn { right: 12px; bottom: 12px; }
+  .ia-panel { right: 8px; left: 8px; width: auto; bottom: 68px; height: min(70vh, calc(100vh - 90px)); }
+}
+
 /* 6. Capas ------------------------------------------------ */
 .lista-capas { display: grid; gap: 6px; }
 .capa {

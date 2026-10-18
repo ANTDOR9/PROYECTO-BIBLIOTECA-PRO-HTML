@@ -22,6 +22,7 @@
       BP.codigo.iniciar();
       BP.galeria.iniciar();
       BP.barra.iniciar();
+      BP.asistente.iniciar();
       BP.emitir('cambio');
     });
   }

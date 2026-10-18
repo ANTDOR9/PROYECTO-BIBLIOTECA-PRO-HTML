@@ -5,7 +5,7 @@
   'use strict';
   var BP = window.BP = window.BP || {};
 
-  var pila = [], pos = -1, MAX = 100;
+  var pila = [], pos = -1, MAX = 100, enLote = false;
 
   function foto() {
     return JSON.stringify({ html: BP.lienzo.htmlPersistente(), tema: BP.tema });
@@ -18,6 +18,7 @@
 
     /* Guarda el estado actual (si cambió respecto al último) */
     registrar: function () {
+      if (enLote) return;
       var f = foto();
       if (pila[pos] === f) return;
       pila = pila.slice(0, pos + 1);
@@ -26,6 +27,9 @@
       pos = pila.length - 1;
       avisar();
     },
+
+    /* Mientras dura un lote, los cambios no crean pasos propios: el llamador registra uno solo al final */
+    lote: function (activo) { enLote = !!activo; },
 
     deshacer: function () {
       if (pos <= 0) return;
