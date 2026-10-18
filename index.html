@@ -3,99 +3,142 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Biblioteca Pro HTML</title>
-  <meta name="description" content="Biblioteca de componentes HTML, CSS y JavaScript en español, organizada por categorías, con vista previa y código listo para copiar.">
+  <title>Biblioteca Pro HTML — Editor de bloques</title>
+  <meta name="description" content="Editor visual de páginas web por bloques, en español: arrastra, edita, cambia colores y obtén el código HTML y CSS limpio.">
   <link rel="stylesheet" href="css/estilos.css">
 </head>
 <body>
-  <a class="salto" href="#contenido">Saltar al contenido</a>
 
-  <header class="cabecera">
-    <button class="boton-menu" id="botonMenu" aria-label="Abrir categorías" aria-expanded="false">☰</button>
+  <!-- ===== Barra superior ===== -->
+  <header class="barra">
+    <button class="ico solo-estrecho" id="btnPanelIzq" aria-label="Mostrar u ocultar bloques" title="Bloques">▤</button>
+
     <div class="marca">
       <span class="marca-logo">&lt;/&gt;</span>
-      <div>
-        <h1>Biblioteca Pro HTML</h1>
-        <p>Componentes listos para copiar, en español</p>
-      </div>
+      <div class="marca-texto"><strong>Biblioteca Pro HTML</strong><small>Editor de bloques</small></div>
     </div>
-    <div class="buscador">
-      <label for="buscar" class="solo-lectores">Buscar componentes</label>
-      <input type="search" id="buscar" placeholder="Buscar por nombre, etiqueta o autor…" autocomplete="off">
+
+    <div class="grupo" id="grupoVista" role="group" aria-label="Tamaño de pantalla">
+      <button data-ancho="100%" class="activo" title="Escritorio">🖥 <span>Escritorio</span></button>
+      <button data-ancho="768px" title="Tableta">▭ <span>Tableta</span></button>
+      <button data-ancho="390px" title="Móvil">📱 <span>Móvil</span></button>
     </div>
-    <button class="boton-tema" id="botonTema" aria-label="Cambiar tema claro/oscuro">🌙</button>
+
+    <div class="grupo" id="grupoModo" role="group" aria-label="Modo de vista">
+      <button data-modo="visual" class="activo">Visual</button>
+      <button data-modo="dividido">Dividido</button>
+      <button data-modo="codigo">&lt;/&gt; Código</button>
+    </div>
+
+    <div class="acciones-barra">
+      <button class="ico" id="btnDeshacer" title="Deshacer (Ctrl+Z)" disabled>↶</button>
+      <button class="ico" id="btnRehacer" title="Rehacer (Ctrl+Y)" disabled>↷</button>
+      <button class="btn" id="btnProbar" title="Abrir la página en una pestaña nueva">Probar</button>
+      <button class="btn primario" id="btnDescargar" title="Descargar la página como archivo .html">Descargar</button>
+      <button class="ico" id="btnTema" title="Cambiar tema del editor">🌙</button>
+      <button class="ico solo-estrecho" id="btnPanelDer" aria-label="Mostrar u ocultar propiedades" title="Propiedades">⚙</button>
+    </div>
   </header>
 
-  <div class="disposicion">
-    <aside class="lateral" id="lateral" aria-label="Categorías">
-      <h2>Categorías</h2>
-      <nav id="listaCategorias"></nav>
-      <div class="lateral-pie">
-        <p><strong id="totalComponentes">0</strong> componentes</p>
-        <p class="nota">Cada componente indica su autor y licencia.</p>
+  <div class="area">
+
+    <!-- ===== Panel izquierdo: biblioteca y capas ===== -->
+    <aside class="panel panel-izq" id="panelIzq" aria-label="Biblioteca de bloques">
+      <div class="pestanas-panel" role="tablist">
+        <button role="tab" data-vista="bloques" class="activo">Bloques</button>
+        <button role="tab" data-vista="capas">Capas <span class="cuenta" id="cuentaCapas">0</span></button>
+      </div>
+
+      <div class="panel-vista" id="vistaBloques">
+        <div class="filtros">
+          <label class="solo-lectores" for="buscarBloque">Buscar bloques</label>
+          <input type="search" id="buscarBloque" placeholder="Buscar bloques…" autocomplete="off">
+          <label class="solo-lectores" for="filtroCategoria">Categoría</label>
+          <select id="filtroCategoria"></select>
+        </div>
+        <p class="ayuda-panel">Haz clic para añadir al final (o después del bloque seleccionado), o arrastra hasta la posición que quieras.</p>
+        <div class="lista-bloques" id="listaBloques"></div>
+      </div>
+
+      <div class="panel-vista" id="vistaCapas" hidden>
+        <p class="ayuda-panel">Arrastra para reordenar. Haz clic para seleccionar.</p>
+        <div class="lista-capas" id="listaCapas"></div>
       </div>
     </aside>
 
-    <main class="principal" id="contenido">
-      <div class="barra-resultados">
-        <h2 id="tituloSeccion">Todos los componentes</h2>
-        <span id="contadorResultados" role="status" aria-live="polite"></span>
+    <!-- ===== Centro: lienzo y código ===== -->
+    <main class="centro">
+      <div class="centro-contenido" id="centro" data-modo="visual">
+        <div class="escenario" id="escenario">
+          <iframe id="lienzo" title="Lienzo de la página que estás creando"></iframe>
+        </div>
+
+        <section class="codigo-panel" id="codigoPanel" aria-label="Código de la página">
+          <div class="codigo-cabecera">
+            <div class="pestanas" role="tablist">
+              <button role="tab" data-codigo="html" class="activo">HTML</button>
+              <button role="tab" data-codigo="css">CSS</button>
+              <button role="tab" data-codigo="todo">Documento completo</button>
+            </div>
+            <div class="codigo-acciones">
+              <button class="btn" id="copiarCodigo">Copiar</button>
+              <button class="btn" id="descargarCodigo">Descargar .html</button>
+            </div>
+          </div>
+          <pre class="codigo-pre"><code id="codigoSalida"></code></pre>
+          <p class="codigo-pie" id="codigoPie"></p>
+        </section>
       </div>
-      <div class="cuadricula" id="cuadricula"></div>
-      <p class="vacio" id="mensajeVacio" hidden>No se encontraron componentes. Prueba con otra búsqueda o categoría.</p>
     </main>
+
+    <!-- ===== Panel derecho: propiedades ===== -->
+    <aside class="panel panel-der" id="panelDer" aria-label="Propiedades">
+      <div class="panel-titulo">Propiedades</div>
+      <div class="panel-cuerpo" id="props"></div>
+    </aside>
   </div>
 
-  <!-- Ventana de detalle -->
+  <!-- ===== Ventana: ver código de un bloque de la biblioteca ===== -->
   <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitulo" hidden>
     <div class="modal-caja">
       <div class="modal-cabecera">
-        <div>
-          <h3 id="modalTitulo"></h3>
-          <p id="modalDescripcion"></p>
-        </div>
-        <button class="cerrar" id="cerrarModal" aria-label="Cerrar">✕</button>
+        <div><h3 id="modalTitulo"></h3><p id="modalDescripcion"></p></div>
+        <button class="ico" id="cerrarModal" aria-label="Cerrar">✕</button>
       </div>
-
       <div class="modal-cuerpo">
-        <section class="vista">
-          <div class="vista-herramientas">
-            <span>Vista previa</span>
-            <div class="grupo-botones" role="group" aria-label="Tamaño de la vista previa">
-              <button data-ancho="100%" class="activo">Escritorio</button>
-              <button data-ancho="768px">Tableta</button>
-              <button data-ancho="375px">Móvil</button>
-            </div>
-          </div>
-          <div class="vista-marco"><iframe id="vistaPrevia" title="Vista previa del componente" sandbox="allow-scripts"></iframe></div>
-        </section>
-
-        <section class="codigo">
-          <div class="pestanas" role="tablist">
-            <button role="tab" data-lenguaje="html" class="activo">HTML</button>
-            <button role="tab" data-lenguaje="css">CSS</button>
-            <button role="tab" data-lenguaje="js">JavaScript</button>
-          </div>
-          <pre><code id="bloqueCodigo"></code></pre>
-          <div class="acciones">
-            <button id="copiarCodigo" class="primario">Copiar código</button>
-            <button id="descargarPagina">Descargar como página</button>
-          </div>
-          <dl class="ficha">
-            <div><dt>Categoría</dt><dd id="fichaCategoria"></dd></div>
-            <div><dt>Nivel</dt><dd id="fichaNivel"></dd></div>
-            <div><dt>Autor</dt><dd id="fichaAutor"></dd></div>
-            <div><dt>Licencia</dt><dd id="fichaLicencia"></dd></div>
-            <div><dt>Etiquetas</dt><dd id="fichaEtiquetas"></dd></div>
-          </dl>
-        </section>
+        <div class="pestanas" role="tablist">
+          <button role="tab" data-modal="html" class="activo">HTML</button>
+          <button role="tab" data-modal="css">CSS</button>
+        </div>
+        <pre class="codigo-pre"><code id="modalCodigo"></code></pre>
+        <p class="codigo-pie" id="modalFicha"></p>
+      </div>
+      <div class="modal-pie">
+        <button class="btn" id="modalCopiar">Copiar código</button>
+        <button class="btn primario" id="modalAgregar">Añadir a la página</button>
       </div>
     </div>
   </div>
 
   <div class="aviso" id="aviso" role="status" aria-live="polite" hidden></div>
+  <div class="velo" id="velo" hidden></div>
 
+  <!-- Datos -->
+  <script src="js/datos/base.js"></script>
   <script src="js/datos/componentes.js"></script>
+  <!-- Núcleo -->
+  <script src="js/nucleo/utilidades.js"></script>
+  <script src="js/nucleo/exportar.js"></script>
+  <script src="js/nucleo/historial.js"></script>
+  <script src="js/nucleo/lienzo.js"></script>
+  <!-- Interfaz -->
+  <script src="js/ui/resaltar.js"></script>
+  <script src="js/ui/biblioteca.js"></script>
+  <script src="js/ui/capas.js"></script>
+  <script src="js/ui/propiedades.js"></script>
+  <script src="js/ui/codigo.js"></script>
+  <script src="js/ui/barra.js"></script>
+  <!-- Arranque -->
   <script src="js/app.js"></script>
 </body>
 </html>

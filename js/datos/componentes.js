@@ -1,418 +1,513 @@
 /* ==========================================================
-   Catálogo de componentes
+   Catálogo de bloques
    ----------------------------------------------------------
-   Para agregar uno nuevo, copia un bloque y cambia los campos:
-   id · nombre · categoria · nivel · descripcion · etiquetas
-   autor · licencia · html · css · js (opcional)
+   Cada bloque es una sección completa que se apila en la página.
+   Campos: id · nombre · categoria · descripcion · etiquetas
+           autor · licencia · html · css
+   Reglas para que el bloque sea editable y reutilizable:
+   - El elemento raíz lleva la clase  bq-<id>
+   - Todo el CSS empieza con  .bq-<id>  (así no choca con otros)
+   - Usa las variables del tema: --primario, --secundario,
+     --fondo, --texto, --suave, --tarjeta, --linea, --radio
    Si copias código de otra fuente, indica su autor y licencia.
    ========================================================== */
-const BASE = `*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:#f4f6fb;color:#1b2036}`;
-const BASE_OSCURA = `*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:#0f1220;color:#e8eaf6}`;
+(function () {
+  'use strict';
+  var BP = window.BP = window.BP || {};
 
-window.COMPONENTES = [
+  /* Imagen de relleno en degradado (SVG incrustado, no necesita internet) */
+  function img(c1, c2, ancho, alto) {
+    var svg = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 " + ancho + " " + alto + "'>" +
+      "<defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='" + c1 + "'/><stop offset='1' stop-color='" + c2 + "'/></linearGradient></defs>" +
+      "<rect width='" + ancho + "' height='" + alto + "' fill='url(#g)'/>" +
+      "<circle cx='" + Math.round(ancho * 0.78) + "' cy='" + Math.round(alto * 0.3) + "' r='" + Math.round(alto * 0.28) + "' fill='#fff' fill-opacity='.18'/>" +
+      "<circle cx='" + Math.round(ancho * 0.2) + "' cy='" + Math.round(alto * 0.85) + "' r='" + Math.round(alto * 0.36) + "' fill='#fff' fill-opacity='.12'/></svg>";
+    return 'data:image/svg+xml,' + encodeURIComponent(svg);
+  }
 
-/* ---------- BOTONES ---------- */
-{
-  id: 'boton-degradado',
-  nombre: 'Botón degradado con brillo',
-  categoria: 'Botones', nivel: 'Principiante',
-  descripcion: 'Botón con degradado y un destello que cruza al pasar el cursor.',
-  etiquetas: ['degradado', 'animación', 'llamada a la acción'],
-  autor: 'Anthony', licencia: 'MIT',
-  html: `<button class="boton">Comenzar ahora</button>`,
-  css: BASE_OSCURA + `
-.boton{position:relative;overflow:hidden;padding:14px 32px;border:0;border-radius:12px;font-size:1rem;font-weight:600;color:#fff;cursor:pointer;background:linear-gradient(135deg,#7c6cff,#38d6c4);transition:transform .2s,box-shadow .2s}
-.boton::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.45) 50%,transparent 70%);transform:translateX(-120%);transition:transform .6s}
-.boton:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(124,108,255,.45)}
-.boton:hover::after{transform:translateX(120%)}
-.boton:active{transform:translateY(0)}
-.boton:focus-visible{outline:3px solid #fff;outline-offset:3px}`
-},
-{
-  id: 'boton-contorno',
-  nombre: 'Botón contorno con relleno',
-  categoria: 'Botones', nivel: 'Principiante',
-  descripcion: 'Botón de borde simple que se rellena desde la izquierda.',
-  etiquetas: ['contorno', 'hover', 'minimalista'],
-  autor: 'Anthony', licencia: 'MIT',
-  html: `<button class="boton">Ver detalles</button>`,
-  css: BASE + `
-.boton{position:relative;z-index:0;overflow:hidden;padding:12px 28px;border:2px solid #5b4bff;border-radius:10px;background:transparent;color:#5b4bff;font-size:1rem;font-weight:600;cursor:pointer;transition:color .3s}
-.boton::before{content:"";position:absolute;inset:0;z-index:-1;background:#5b4bff;transform:scaleX(0);transform-origin:left;transition:transform .3s}
-.boton:hover{color:#fff}
-.boton:hover::before{transform:scaleX(1)}
-.boton:focus-visible{outline:3px solid #38d6c4;outline-offset:3px}`
-},
-{
-  id: 'boton-cargando',
-  nombre: 'Botón con estado de carga',
-  categoria: 'Botones', nivel: 'Intermedio',
-  descripcion: 'Al hacer clic muestra un indicador de carga y vuelve a su estado normal.',
-  etiquetas: ['carga', 'spinner', 'javascript'],
-  autor: 'Anthony', licencia: 'MIT',
-  html: `<button class="boton" id="enviar"><span class="giro" aria-hidden="true"></span><span class="texto">Enviar</span></button>`,
-  css: BASE + `
-.boton{display:inline-flex;align-items:center;gap:10px;padding:13px 28px;border:0;border-radius:10px;background:#1f9d6b;color:#fff;font-size:1rem;font-weight:600;cursor:pointer;transition:opacity .2s}
-.boton[disabled]{opacity:.75;cursor:wait}
-.giro{display:none;width:16px;height:16px;border:3px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:girar .7s linear infinite}
-.boton.cargando .giro{display:inline-block}
-@keyframes girar{to{transform:rotate(360deg)}}`,
-  js: `var boton = document.getElementById('enviar');
-var texto = boton.querySelector('.texto');
-boton.addEventListener('click', function () {
-  boton.disabled = true;
-  boton.classList.add('cargando');
-  texto.textContent = 'Enviando…';
-  setTimeout(function () {
-    boton.disabled = false;
-    boton.classList.remove('cargando');
-    texto.textContent = '¡Enviado!';
-    setTimeout(function () { texto.textContent = 'Enviar'; }, 1500);
-  }, 1800);
-});`
-},
+  BP.categorias = ['Navegación', 'Portadas', 'Contenido', 'Llamadas a la acción', 'Formularios', 'Pie de página', 'Básicos'];
 
-/* ---------- TARJETAS ---------- */
-{
-  id: 'tarjeta-producto',
-  nombre: 'Tarjeta de producto',
-  categoria: 'Tarjetas', nivel: 'Principiante',
-  descripcion: 'Tarjeta con imagen, precio, etiqueta de oferta y botón de compra.',
-  etiquetas: ['tienda', 'producto', 'precio'],
-  autor: 'Anthony', licencia: 'MIT',
-  html: `<article class="tarjeta">
-  <div class="imagen"><span class="oferta">-20%</span></div>
-  <div class="cuerpo">
-    <p class="categoria">Pantallas interactivas</p>
-    <h3>Panel táctil 65"</h3>
-    <p class="descripcion">Resolución 4K, ideal para aulas y salas de reuniones.</p>
-    <div class="pie">
-      <span class="precio">S/ 4,990 <s>S/ 6,240</s></span>
-      <button>Cotizar</button>
+  BP.bloques = [
+
+  /* ================= NAVEGACIÓN ================= */
+  {
+    id: 'nav-simple', nombre: 'Barra de navegación', categoria: 'Navegación',
+    descripcion: 'Logo, enlaces y botón. En móvil se convierte en menú desplegable.',
+    etiquetas: ['menú', 'cabecera', 'responsivo'], autor: 'Anthony', licencia: 'MIT',
+    html: `<header class="bq-nav-simple">
+  <div class="contenedor fila">
+    <a href="#" class="logo">MiMarca</a>
+    <input type="checkbox" id="menu-nav" class="interruptor">
+    <label for="menu-nav" class="hamburguesa" aria-label="Abrir menú">☰</label>
+    <nav class="enlaces">
+      <a href="#inicio">Inicio</a>
+      <a href="#servicios">Servicios</a>
+      <a href="#precios">Precios</a>
+      <a href="#contacto">Contacto</a>
+      <a href="#contacto" class="boton">Empezar</a>
+    </nav>
+  </div>
+</header>`,
+    css: `.bq-nav-simple{background:var(--fondo);border-bottom:1px solid var(--linea)}
+.bq-nav-simple .fila{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;padding:16px 0}
+.bq-nav-simple .logo{font-size:1.3rem;font-weight:800;color:var(--primario);text-decoration:none}
+.bq-nav-simple .enlaces{display:flex;align-items:center;gap:6px}
+.bq-nav-simple .enlaces a{padding:8px 14px;border-radius:8px;color:var(--suave);font-weight:500;text-decoration:none}
+.bq-nav-simple .enlaces a:hover{color:var(--texto);background:var(--tarjeta)}
+.bq-nav-simple .enlaces a.boton,.bq-nav-simple .enlaces a.boton:hover{margin-left:8px;color:#fff;background:var(--primario)}
+.bq-nav-simple .interruptor{display:none}
+.bq-nav-simple .hamburguesa{display:none;padding:0 8px;font-size:1.6rem;cursor:pointer}
+@media (max-width:760px){
+.bq-nav-simple .hamburguesa{display:block}
+.bq-nav-simple .enlaces{display:none;width:100%;flex-direction:column;align-items:stretch}
+.bq-nav-simple .interruptor:checked~.enlaces{display:flex}
+.bq-nav-simple .enlaces a.boton{margin:6px 0 0;text-align:center}
+}`
+  },
+
+  /* ================= PORTADAS ================= */
+  {
+    id: 'hero-centrado', nombre: 'Portada centrada', categoria: 'Portadas',
+    descripcion: 'Título grande y botones sobre un fondo degradado con los colores del tema.',
+    etiquetas: ['hero', 'portada', 'degradado'], autor: 'Anthony', licencia: 'MIT',
+    html: `<section class="bq-hero-centrado" id="inicio">
+  <div class="contenedor">
+    <span class="sobretitulo">Tecnología para tu negocio</span>
+    <h1>Soluciones digitales que impulsan tu empresa</h1>
+    <p>Desarrollo web, automatización y software a medida para pequeñas y medianas empresas.</p>
+    <div class="botones">
+      <a href="#contacto" class="boton claro">Solicitar cotización</a>
+      <a href="#servicios" class="boton contorno-claro">Ver servicios</a>
     </div>
   </div>
-</article>`,
-  css: BASE + `
-.tarjeta{width:300px;background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 12px 30px rgba(30,40,90,.15);transition:transform .25s}
-.tarjeta:hover{transform:translateY(-6px)}
-.imagen{position:relative;height:160px;background:linear-gradient(135deg,#7c6cff,#38d6c4)}
-.oferta{position:absolute;top:12px;left:12px;background:#ff4d6d;color:#fff;font-weight:700;font-size:.8rem;padding:4px 10px;border-radius:99px}
-.cuerpo{padding:18px 20px 20px}
-.categoria{margin:0;font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;color:#7a82a3}
-h3{margin:4px 0 6px;font-size:1.2rem}
-.descripcion{margin:0 0 16px;font-size:.9rem;color:#5d6585}
-.pie{display:flex;justify-content:space-between;align-items:center}
-.precio{font-weight:700}
-.precio s{font-weight:400;font-size:.8rem;color:#9aa1c4;margin-left:4px}
-button{padding:9px 18px;border:0;border-radius:10px;background:#1b2036;color:#fff;font-weight:600;cursor:pointer}
-button:hover{background:#5b4bff}`
-},
-{
-  id: 'tarjeta-perfil',
-  nombre: 'Tarjeta de perfil',
-  categoria: 'Tarjetas', nivel: 'Principiante',
-  descripcion: 'Tarjeta de presentación con avatar, cargo, estadísticas y botón de contacto.',
-  etiquetas: ['perfil', 'equipo', 'avatar'],
-  autor: 'Anthony', licencia: 'MIT',
-  html: `<article class="perfil">
-  <div class="avatar">A</div>
-  <h3>Anthony</h3>
-  <p class="cargo">Desarrollador de software</p>
-  <ul class="datos">
-    <li><strong>24</strong><span>Proyectos</span></li>
-    <li><strong>8</strong><span>Clientes</span></li>
-    <li><strong>3</strong><span>Años</span></li>
-  </ul>
-  <a href="#" class="contacto">Contactar</a>
-</article>`,
-  css: BASE_OSCURA + `
-.perfil{width:280px;text-align:center;padding:30px 24px;background:#181c30;border:1px solid #2d3354;border-radius:20px}
-.avatar{width:84px;height:84px;margin:0 auto 14px;display:grid;place-items:center;border-radius:50%;font-size:2rem;font-weight:700;background:linear-gradient(135deg,#7c6cff,#38d6c4)}
-h3{margin:0}
-.cargo{margin:4px 0 18px;color:#9aa1c4;font-size:.9rem}
-.datos{display:flex;justify-content:space-around;list-style:none;margin:0 0 20px;padding:14px 0;border-block:1px solid #2d3354}
-.datos strong{display:block;font-size:1.2rem}
-.datos span{font-size:.75rem;color:#9aa1c4}
-.contacto{display:inline-block;padding:10px 26px;border-radius:99px;background:#7c6cff;color:#fff;text-decoration:none;font-weight:600}
-.contacto:hover{background:#6a59f0}`
-},
-{
-  id: 'tarjeta-cristal',
-  nombre: 'Tarjeta de cristal',
-  categoria: 'Tarjetas', nivel: 'Intermedio',
-  descripcion: 'Efecto vidrio esmerilado (glassmorphism) sobre un fondo de colores.',
-  etiquetas: ['cristal', 'blur', 'moderno'],
-  autor: 'Anthony', licencia: 'MIT',
-  html: `<div class="escena">
-  <article class="cristal">
-    <h3>Reunión de equipo</h3>
-    <p>Mañana, 10:00 a. m.</p>
-    <span class="etiqueta">Confirmada</span>
-  </article>
-</div>`,
-  css: `*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;font-family:system-ui,sans-serif}
-.escena{display:grid;place-items:center;width:100%;min-height:100vh;background:radial-gradient(circle at 20% 25%,#ff6ec4 0,transparent 40%),radial-gradient(circle at 80% 70%,#38d6c4 0,transparent 45%),#3a2fb3}
-.cristal{width:290px;padding:26px;color:#fff;border-radius:20px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.35);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 12px 40px rgba(0,0,0,.25)}
-h3{margin:0 0 6px}
-p{margin:0 0 16px;opacity:.9}
-.etiqueta{font-size:.78rem;font-weight:600;padding:4px 12px;border-radius:99px;background:rgba(255,255,255,.25)}`
-},
-
-/* ---------- FORMULARIOS ---------- */
-{
-  id: 'campo-flotante',
-  nombre: 'Campo con etiqueta flotante',
-  categoria: 'Formularios', nivel: 'Intermedio',
-  descripcion: 'La etiqueta sube y se reduce al escribir, sin usar JavaScript.',
-  etiquetas: ['input', 'etiqueta', 'solo CSS'],
-  autor: 'Anthony', licencia: 'MIT',
-  html: `<div class="campo">
-  <input type="email" id="correo" placeholder=" " required>
-  <label for="correo">Correo electrónico</label>
-</div>`,
-  css: BASE + `
-.campo{position:relative;width:300px}
-input{width:100%;padding:20px 14px 8px;border:2px solid #cfd5e8;border-radius:12px;font-size:1rem;background:#fff;color:inherit;transition:border-color .2s}
-label{position:absolute;left:16px;top:16px;color:#7a82a3;pointer-events:none;transition:all .2s;transform-origin:left}
-input:focus{outline:0;border-color:#5b4bff}
-input:focus+label,input:not(:placeholder-shown)+label{top:6px;transform:scale(.78);color:#5b4bff}
-input:not(:placeholder-shown):invalid{border-color:#e5484d}`
-},
-{
-  id: 'interruptor',
-  nombre: 'Interruptor (toggle)',
-  categoria: 'Formularios', nivel: 'Principiante',
-  descripcion: 'Interruptor accesible de encendido y apagado hecho con una casilla.',
-  etiquetas: ['toggle', 'casilla', 'accesible'],
-  autor: 'Anthony', licencia: 'MIT',
-  html: `<label class="interruptor">
-  <input type="checkbox" role="switch">
-  <span class="pista"><span class="perilla"></span></span>
-  <span class="texto">Notificaciones</span>
-</label>`,
-  css: BASE + `
-.interruptor{display:inline-flex;align-items:center;gap:12px;cursor:pointer;font-weight:500}
-input{position:absolute;opacity:0}
-.pista{width:52px;height:30px;border-radius:99px;background:#c3c9de;padding:3px;transition:background .25s}
-.perilla{display:block;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 2px 5px rgba(0,0,0,.25);transition:transform .25s}
-input:checked+.pista{background:#1f9d6b}
-input:checked+.pista .perilla{transform:translateX(22px)}
-input:focus-visible+.pista{outline:3px solid #5b4bff;outline-offset:2px}`
-},
-{
-  id: 'formulario-contacto',
-  nombre: 'Formulario de contacto',
-  categoria: 'Formularios', nivel: 'Intermedio',
-  descripcion: 'Formulario con validación y mensaje de confirmación en español.',
-  etiquetas: ['contacto', 'validación', 'javascript'],
-  autor: 'Anthony', licencia: 'MIT',
-  html: `<form class="formulario" id="contacto" novalidate>
-  <h3>Escríbenos</h3>
-  <label>Nombre<input type="text" name="nombre" required></label>
-  <label>Correo<input type="email" name="correo" required></label>
-  <label>Mensaje<textarea name="mensaje" rows="3" required></textarea></label>
-  <p class="error" id="error" role="alert"></p>
-  <button type="submit">Enviar mensaje</button>
-</form>`,
-  css: BASE + `
-.formulario{width:340px;display:grid;gap:14px;padding:26px;background:#fff;border-radius:18px;box-shadow:0 12px 30px rgba(30,40,90,.15)}
-h3{margin:0}
-label{display:grid;gap:6px;font-size:.88rem;font-weight:600}
-input,textarea{padding:11px 12px;border:2px solid #d5daea;border-radius:10px;font:inherit;font-weight:400;resize:vertical}
-input:focus,textarea:focus{outline:0;border-color:#5b4bff}
-.error{margin:0;min-height:1.2em;font-size:.85rem;color:#d1344b}
-.error.ok{color:#1f9d6b}
-button{padding:12px;border:0;border-radius:10px;background:#5b4bff;color:#fff;font-weight:600;cursor:pointer}
-button:hover{background:#4a3ae6}`,
-  js: `var form = document.getElementById('contacto');
-var error = document.getElementById('error');
-form.addEventListener('submit', function (e) {
-  e.preventDefault();
-  error.classList.remove('ok');
-  if (!form.nombre.value.trim()) { error.textContent = 'Escribe tu nombre.'; return; }
-  if (!/^\\S+@\\S+\\.\\S+$/.test(form.correo.value)) { error.textContent = 'Ingresa un correo válido.'; return; }
-  if (form.mensaje.value.trim().length < 10) { error.textContent = 'El mensaje debe tener al menos 10 caracteres.'; return; }
-  error.textContent = '¡Gracias! Tu mensaje fue enviado.';
-  error.classList.add('ok');
-  form.reset();
-});`
-},
-
-/* ---------- NAVEGACIÓN ---------- */
-{
-  id: 'barra-navegacion',
-  nombre: 'Barra de navegación responsiva',
-  categoria: 'Navegación', nivel: 'Intermedio',
-  descripcion: 'Menú superior que se convierte en menú desplegable en pantallas pequeñas.',
-  etiquetas: ['menú', 'responsivo', 'cabecera'],
-  autor: 'Anthony', licencia: 'MIT',
-  html: `<header class="barra">
-  <a href="#" class="logo">MiMarca</a>
-  <button class="hamburguesa" id="menuBtn" aria-label="Abrir menú" aria-expanded="false">☰</button>
-  <nav class="enlaces" id="enlaces">
-    <a href="#" class="activo">Inicio</a>
-    <a href="#">Servicios</a>
-    <a href="#">Proyectos</a>
-    <a href="#">Contacto</a>
-  </nav>
-</header>`,
-  css: `*{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:system-ui,sans-serif;background:#f4f6fb}
-.barra{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:14px 22px;background:#1b2036;color:#fff}
-.logo{font-weight:800;font-size:1.2rem;color:#fff;text-decoration:none}
-.enlaces{display:flex;gap:6px}
-.enlaces a{padding:8px 14px;border-radius:8px;color:#c9cfee;text-decoration:none}
-.enlaces a:hover,.enlaces a.activo{background:#7c6cff;color:#fff}
-.hamburguesa{display:none;border:0;background:transparent;color:#fff;font-size:1.5rem;cursor:pointer}
-@media(max-width:560px){
-  .hamburguesa{display:block}
-  .enlaces{display:none;width:100%;flex-direction:column;margin-top:10px}
-  .enlaces.abierto{display:flex}
-}`,
-  js: `var btn = document.getElementById('menuBtn');
-var enlaces = document.getElementById('enlaces');
-btn.addEventListener('click', function () {
-  var abierto = enlaces.classList.toggle('abierto');
-  btn.setAttribute('aria-expanded', String(abierto));
-});`
-},
-{
-  id: 'pestanas',
-  nombre: 'Pestañas',
-  categoria: 'Navegación', nivel: 'Intermedio',
-  descripcion: 'Contenido organizado en pestañas con navegación por teclado.',
-  etiquetas: ['tabs', 'contenido', 'accesible'],
-  autor: 'Anthony', licencia: 'MIT',
-  html: `<div class="pestanas">
-  <div class="lista" role="tablist">
-    <button role="tab" aria-selected="true" aria-controls="p1">Descripción</button>
-    <button role="tab" aria-selected="false" aria-controls="p2">Especificaciones</button>
-    <button role="tab" aria-selected="false" aria-controls="p3">Garantía</button>
-  </div>
-  <div class="panel" id="p1" role="tabpanel">Pantalla interactiva pensada para educación y empresas.</div>
-  <div class="panel" id="p2" role="tabpanel" hidden>Resolución 4K · 20 puntos táctiles · Android 13.</div>
-  <div class="panel" id="p3" role="tabpanel" hidden>Garantía de 24 meses con soporte técnico local.</div>
-</div>`,
-  css: BASE + `
-.pestanas{width:380px;background:#fff;border-radius:16px;box-shadow:0 12px 30px rgba(30,40,90,.15);overflow:hidden}
-.lista{display:flex;border-bottom:1px solid #e1e5f2}
-.lista button{flex:1;padding:14px 8px;border:0;background:transparent;font:inherit;font-weight:600;color:#7a82a3;cursor:pointer;border-bottom:3px solid transparent}
-.lista button[aria-selected="true"]{color:#5b4bff;border-bottom-color:#5b4bff}
-.panel{padding:22px;line-height:1.6}`,
-  js: `var tabs = document.querySelectorAll('[role=tab]');
-tabs.forEach(function (tab, i) {
-  tab.addEventListener('click', function () { activar(tab); });
-  tab.addEventListener('keydown', function (e) {
-    if (e.key === 'ArrowRight') { activar(tabs[(i + 1) % tabs.length]); }
-    if (e.key === 'ArrowLeft') { activar(tabs[(i - 1 + tabs.length) % tabs.length]); }
-  });
-});
-function activar(tab) {
-  tabs.forEach(function (t) {
-    var sel = t === tab;
-    t.setAttribute('aria-selected', String(sel));
-    document.getElementById(t.getAttribute('aria-controls')).hidden = !sel;
-  });
-  tab.focus();
-}`
-},
-
-/* ---------- ELEMENTOS DE INTERFAZ ---------- */
-{
-  id: 'acordeon',
-  nombre: 'Acordeón de preguntas',
-  categoria: 'Interfaz', nivel: 'Principiante',
-  descripcion: 'Preguntas frecuentes desplegables usando solo HTML y CSS.',
-  etiquetas: ['faq', 'desplegable', 'details'],
-  autor: 'Anthony', licencia: 'MIT',
-  html: `<section class="acordeon">
-  <details open><summary>¿Cómo funciona el envío?</summary><p>Enviamos a todo el Perú en 3 a 5 días hábiles.</p></details>
-  <details><summary>¿Tienen garantía?</summary><p>Sí, 24 meses en todos nuestros equipos.</p></details>
-  <details><summary>¿Ofrecen capacitación?</summary><p>Incluimos una sesión de capacitación gratuita.</p></details>
 </section>`,
-  css: BASE + `
-.acordeon{width:380px;display:grid;gap:10px}
-details{background:#fff;border-radius:12px;box-shadow:0 4px 14px rgba(30,40,90,.1);overflow:hidden}
-summary{padding:16px 18px;font-weight:600;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center}
-summary::-webkit-details-marker{display:none}
-summary::after{content:"+";font-size:1.4rem;color:#5b4bff;transition:transform .25s}
-details[open] summary::after{transform:rotate(45deg)}
-details p{margin:0;padding:0 18px 18px;color:#5d6585;line-height:1.6}`
-},
-{
-  id: 'alertas',
-  nombre: 'Alertas con cierre',
-  categoria: 'Interfaz', nivel: 'Principiante',
-  descripcion: 'Mensajes de éxito, aviso y error que el usuario puede cerrar.',
-  etiquetas: ['mensaje', 'aviso', 'cerrar'],
-  autor: 'Anthony', licencia: 'MIT',
-  html: `<div class="alertas">
-  <div class="alerta exito"><span>✔ Cambios guardados correctamente.</span><button aria-label="Cerrar">✕</button></div>
-  <div class="alerta aviso"><span>⚠ Tu sesión expirará pronto.</span><button aria-label="Cerrar">✕</button></div>
-  <div class="alerta error"><span>✖ No se pudo conectar con el servidor.</span><button aria-label="Cerrar">✕</button></div>
-</div>`,
-  css: BASE + `
-.alertas{width:380px;display:grid;gap:10px}
-.alerta{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 16px;border-radius:12px;border-left:5px solid;font-size:.92rem}
-.alerta button{border:0;background:transparent;font-size:1rem;cursor:pointer;opacity:.6}
-.alerta button:hover{opacity:1}
-.exito{background:#e4f8ee;border-color:#1f9d6b;color:#0f5e40}
-.aviso{background:#fff4dc;border-color:#e6a100;color:#7a5200}
-.error{background:#ffe6ea;border-color:#d1344b;color:#8a1730}`,
-  js: `document.querySelectorAll('.alerta button').forEach(function (b) {
-  b.addEventListener('click', function () { b.parentElement.remove(); });
-});`
-},
-{
-  id: 'insignias',
-  nombre: 'Insignias de estado',
-  categoria: 'Interfaz', nivel: 'Principiante',
-  descripcion: 'Etiquetas pequeñas para indicar estados: activo, pendiente, finalizado.',
-  etiquetas: ['badge', 'estado', 'etiqueta'],
-  autor: 'Anthony', licencia: 'MIT',
-  html: `<div class="insignias">
-  <span class="insignia verde">Activo</span>
-  <span class="insignia amarilla">Pendiente</span>
-  <span class="insignia roja">Vencido</span>
-  <span class="insignia azul">En revisión</span>
-</div>`,
-  css: BASE + `
-.insignias{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
-.insignia{display:inline-flex;align-items:center;gap:7px;padding:5px 14px;border-radius:99px;font-size:.82rem;font-weight:600}
-.insignia::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}
-.verde{background:#e4f8ee;color:#0f7a52}
-.amarilla{background:#fff4dc;color:#946200}
-.roja{background:#ffe6ea;color:#b02540}
-.azul{background:#e5eaff;color:#3a3fb3}`
-},
-
-/* ---------- SECCIONES ---------- */
-{
-  id: 'seccion-hero',
-  nombre: 'Sección principal (hero)',
-  categoria: 'Secciones', nivel: 'Intermedio',
-  descripcion: 'Portada de página con título, texto, botones y fondo en degradado.',
-  etiquetas: ['portada', 'landing', 'hero'],
-  autor: 'Anthony', licencia: 'MIT',
-  html: `<section class="hero">
-  <p class="sobretitulo">Tecnología para tu negocio</p>
-  <h1>Soluciones digitales que <span>impulsan</span> tu empresa</h1>
-  <p class="texto">Desarrollo web, automatización y software a medida para pequeñas y medianas empresas.</p>
-  <div class="botones">
-    <a href="#" class="primario">Solicitar cotización</a>
-    <a href="#" class="secundario">Ver proyectos</a>
+    css: `.bq-hero-centrado{padding:110px 0;text-align:center;color:#fff;background:linear-gradient(135deg,var(--primario),var(--secundario))}
+.bq-hero-centrado .sobretitulo{display:block;margin-bottom:14px;font-size:.82rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.bq-hero-centrado h1{max-width:800px;margin:0 auto;font-size:clamp(2rem,5vw,3.4rem);line-height:1.15}
+.bq-hero-centrado p{max-width:620px;margin:20px auto 32px;font-size:1.15rem;opacity:.92}
+.bq-hero-centrado .botones{display:flex;flex-wrap:wrap;justify-content:center;gap:12px}`
+  },
+  {
+    id: 'hero-dividido', nombre: 'Portada con imagen', categoria: 'Portadas',
+    descripcion: 'Texto a la izquierda e imagen a la derecha; se apila en pantallas pequeñas.',
+    etiquetas: ['hero', 'imagen', 'dos columnas'], autor: 'Anthony', licencia: 'MIT',
+    html: `<section class="bq-hero-dividido" id="inicio">
+  <div class="contenedor rejilla">
+    <div class="texto">
+      <span class="insignia">Nuevo</span>
+      <h1>Crea páginas web profesionales en minutos</h1>
+      <p>Arma tu sitio bloque por bloque, personaliza colores y textos, y descarga el código listo para publicar.</p>
+      <div class="botones">
+        <a href="#contacto" class="boton">Empezar ahora</a>
+        <a href="#servicios" class="boton contorno">Saber más</a>
+      </div>
+    </div>
+    <img src="${img('#5b4bff', '#38d6c4', 800, 600)}" alt="Imagen de portada">
   </div>
 </section>`,
-  css: `*{box-sizing:border-box}body{margin:0;font-family:system-ui,sans-serif}
-.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:18px;padding:40px 24px;color:#fff;background:linear-gradient(135deg,#1b1464,#5b4bff 55%,#38d6c4)}
-.sobretitulo{margin:0;text-transform:uppercase;letter-spacing:.14em;font-size:.8rem;opacity:.85}
-h1{margin:0;max-width:760px;font-size:clamp(1.9rem,5vw,3.2rem);line-height:1.15}
-h1 span{color:#ffe27a}
-.texto{margin:0;max-width:560px;opacity:.92;line-height:1.6}
-.botones{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:8px}
-.botones a{padding:13px 28px;border-radius:12px;font-weight:600;text-decoration:none}
-.primario{background:#fff;color:#2b1fa8}
-.secundario{border:2px solid rgba(255,255,255,.7);color:#fff}
-.botones a:hover{transform:translateY(-2px)}`
-}
+    css: `.bq-hero-dividido{padding:80px 0}
+.bq-hero-dividido .rejilla{display:grid;grid-template-columns:1.1fr 1fr;gap:48px;align-items:center}
+.bq-hero-dividido .insignia{margin-bottom:16px}
+.bq-hero-dividido h1{font-size:clamp(2rem,4.5vw,3.2rem);line-height:1.15}
+.bq-hero-dividido p{margin:18px 0 30px;font-size:1.1rem;color:var(--suave)}
+.bq-hero-dividido .botones{display:flex;flex-wrap:wrap;gap:12px}
+.bq-hero-dividido img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:calc(var(--radio) * 1.6);box-shadow:0 24px 50px color-mix(in srgb,var(--texto) 22%,transparent)}
+@media (max-width:820px){.bq-hero-dividido .rejilla{grid-template-columns:1fr}}`
+  },
 
-];
+  /* ================= CONTENIDO ================= */
+  {
+    id: 'caracteristicas', nombre: 'Tres características', categoria: 'Contenido',
+    descripcion: 'Título de sección y tres tarjetas con icono, título y descripción.',
+    etiquetas: ['servicios', 'tarjetas', 'iconos'], autor: 'Anthony', licencia: 'MIT',
+    html: `<section class="bq-caracteristicas" id="servicios">
+  <div class="contenedor">
+    <div class="cabecera">
+      <h2>Todo lo que necesitas</h2>
+      <p>Herramientas pensadas para que tu negocio crezca sin complicaciones.</p>
+    </div>
+    <div class="rejilla">
+      <article class="tarjeta"><span class="icono">⚡</span><h3>Rápido</h3><p>Páginas livianas que cargan al instante en cualquier dispositivo.</p></article>
+      <article class="tarjeta"><span class="icono">🎨</span><h3>Personalizable</h3><p>Cambia colores, tipografías y textos para que se vea como tu marca.</p></article>
+      <article class="tarjeta"><span class="icono">🔒</span><h3>Confiable</h3><p>Código limpio y ordenado, fácil de mantener y de publicar.</p></article>
+    </div>
+  </div>
+</section>`,
+    css: `.bq-caracteristicas{padding:80px 0}
+.bq-caracteristicas .cabecera{max-width:620px;margin:0 auto 48px;text-align:center}
+.bq-caracteristicas h2{font-size:clamp(1.7rem,3.5vw,2.4rem)}
+.bq-caracteristicas .cabecera p{margin-top:12px;color:var(--suave)}
+.bq-caracteristicas .rejilla{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px}
+.bq-caracteristicas .tarjeta{padding:30px;background:var(--tarjeta);border:1px solid var(--linea);border-radius:calc(var(--radio) * 1.3)}
+.bq-caracteristicas .icono{display:grid;place-items:center;width:52px;height:52px;margin-bottom:18px;border-radius:calc(var(--radio) * 1.1);background:color-mix(in srgb,var(--primario) 14%,var(--fondo));font-size:1.5rem}
+.bq-caracteristicas h3{margin-bottom:8px;font-size:1.2rem}
+.bq-caracteristicas .tarjeta p{color:var(--suave)}`
+  },
+  {
+    id: 'texto-imagen', nombre: 'Texto con imagen', categoria: 'Contenido',
+    descripcion: 'Imagen a un lado y texto con lista de puntos al otro.',
+    etiquetas: ['imagen', 'lista', 'dos columnas'], autor: 'Anthony', licencia: 'MIT',
+    html: `<section class="bq-texto-imagen">
+  <div class="contenedor rejilla">
+    <img src="${img('#38d6c4', '#5b4bff', 800, 640)}" alt="Imagen ilustrativa">
+    <div class="texto">
+      <h2>Una forma más simple de trabajar</h2>
+      <p>Cuéntales a tus clientes qué te hace diferente. Usa pocas palabras y ve directo a los beneficios.</p>
+      <ul>
+        <li>Atención personalizada en cada proyecto</li>
+        <li>Entrega puntual y soporte posterior</li>
+        <li>Precios claros, sin sorpresas</li>
+      </ul>
+      <a href="#contacto" class="boton">Hablemos</a>
+    </div>
+  </div>
+</section>`,
+    css: `.bq-texto-imagen{padding:80px 0}
+.bq-texto-imagen .rejilla{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+.bq-texto-imagen img{width:100%;aspect-ratio:5/4;object-fit:cover;border-radius:calc(var(--radio) * 1.6)}
+.bq-texto-imagen h2{font-size:clamp(1.7rem,3.5vw,2.3rem)}
+.bq-texto-imagen p{margin:14px 0 20px;color:var(--suave)}
+.bq-texto-imagen ul{display:grid;gap:10px;margin:0 0 28px;padding:0;list-style:none}
+.bq-texto-imagen li{position:relative;padding-left:30px}
+.bq-texto-imagen li::before{content:"✓";position:absolute;left:0;top:1px;display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--primario);color:#fff;font-size:.72rem;font-weight:700}
+@media (max-width:820px){.bq-texto-imagen .rejilla{grid-template-columns:1fr;gap:32px}}`
+  },
+  {
+    id: 'estadisticas', nombre: 'Cifras destacadas', categoria: 'Contenido',
+    descripcion: 'Cuatro números grandes con su descripción sobre fondo oscuro.',
+    etiquetas: ['números', 'métricas', 'logros'], autor: 'Anthony', licencia: 'MIT',
+    html: `<section class="bq-estadisticas">
+  <div class="contenedor rejilla">
+    <div class="dato"><strong>120+</strong><span>Proyectos entregados</span></div>
+    <div class="dato"><strong>45</strong><span>Clientes activos</span></div>
+    <div class="dato"><strong>98%</strong><span>Clientes satisfechos</span></div>
+    <div class="dato"><strong>5 años</strong><span>De experiencia</span></div>
+  </div>
+</section>`,
+    css: `.bq-estadisticas{padding:60px 0;background:var(--texto);color:var(--fondo)}
+.bq-estadisticas .rejilla{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:28px;text-align:center}
+.bq-estadisticas strong{display:block;font-size:clamp(2rem,4vw,2.8rem);line-height:1.1;color:var(--secundario)}
+.bq-estadisticas span{opacity:.8}`
+  },
+  {
+    id: 'testimonios', nombre: 'Testimonios', categoria: 'Contenido',
+    descripcion: 'Tres opiniones de clientes con nombre y cargo.',
+    etiquetas: ['opiniones', 'clientes', 'tarjetas'], autor: 'Anthony', licencia: 'MIT',
+    html: `<section class="bq-testimonios">
+  <div class="contenedor">
+    <h2>Lo que dicen nuestros clientes</h2>
+    <div class="rejilla">
+      <figure class="tarjeta"><blockquote>“Entregaron mi página antes de lo prometido y quedó exactamente como la imaginaba.”</blockquote><figcaption><strong>Lucía Ramos</strong><span>Dueña de tienda</span></figcaption></figure>
+      <figure class="tarjeta"><blockquote>“Ahora recibimos consultas todos los días gracias a nuestro nuevo sitio web.”</blockquote><figcaption><strong>Carlos Vega</strong><span>Gerente comercial</span></figcaption></figure>
+      <figure class="tarjeta"><blockquote>“Trato cercano, comunicación clara y un resultado profesional. Los recomiendo.”</blockquote><figcaption><strong>Marta Quispe</strong><span>Emprendedora</span></figcaption></figure>
+    </div>
+  </div>
+</section>`,
+    css: `.bq-testimonios{padding:80px 0;background:var(--tarjeta)}
+.bq-testimonios h2{margin-bottom:44px;text-align:center;font-size:clamp(1.7rem,3.5vw,2.4rem)}
+.bq-testimonios .rejilla{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px}
+.bq-testimonios .tarjeta{margin:0;padding:28px;background:var(--fondo);border:1px solid var(--linea);border-radius:calc(var(--radio) * 1.3)}
+.bq-testimonios blockquote{margin:0 0 20px;font-size:1.05rem}
+.bq-testimonios figcaption strong{display:block}
+.bq-testimonios figcaption span{font-size:.88rem;color:var(--suave)}`
+  },
+  {
+    id: 'galeria', nombre: 'Galería de imágenes', categoria: 'Contenido',
+    descripcion: 'Seis imágenes en cuadrícula que se adapta al ancho de la pantalla.',
+    etiquetas: ['fotos', 'cuadrícula', 'imágenes'], autor: 'Anthony', licencia: 'MIT',
+    html: `<section class="bq-galeria">
+  <div class="contenedor">
+    <h2>Nuestros trabajos</h2>
+    <div class="rejilla">
+      <img src="${img('#5b4bff', '#8f7bff', 600, 450)}" alt="Trabajo 1">
+      <img src="${img('#38d6c4', '#1b9a8c', 600, 450)}" alt="Trabajo 2">
+      <img src="${img('#ff7a59', '#ffb347', 600, 450)}" alt="Trabajo 3">
+      <img src="${img('#2b2f54', '#5b4bff', 600, 450)}" alt="Trabajo 4">
+      <img src="${img('#ff5d8f', '#ff9ec0', 600, 450)}" alt="Trabajo 5">
+      <img src="${img('#2fbf71', '#38d6c4', 600, 450)}" alt="Trabajo 6">
+    </div>
+  </div>
+</section>`,
+    css: `.bq-galeria{padding:80px 0}
+.bq-galeria h2{margin-bottom:40px;text-align:center;font-size:clamp(1.7rem,3.5vw,2.4rem)}
+.bq-galeria .rejilla{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.bq-galeria img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:var(--radio);transition:transform .25s}
+.bq-galeria img:hover{transform:scale(1.03)}`
+  },
+  {
+    id: 'precios', nombre: 'Planes y precios', categoria: 'Contenido',
+    descripcion: 'Tres planes con lista de beneficios; el del medio aparece destacado.',
+    etiquetas: ['planes', 'tarifas', 'tarjetas'], autor: 'Anthony', licencia: 'MIT',
+    html: `<section class="bq-precios" id="precios">
+  <div class="contenedor">
+    <div class="cabecera"><h2>Elige tu plan</h2><p>Sin contratos largos. Cambia o cancela cuando quieras.</p></div>
+    <div class="rejilla">
+      <article class="plan">
+        <h3>Básico</h3>
+        <p class="precio"><strong>S/ 99</strong> / mes</p>
+        <ul><li>1 página web</li><li>Formulario de contacto</li><li>Soporte por correo</li></ul>
+        <a href="#contacto" class="boton contorno">Elegir plan</a>
+      </article>
+      <article class="plan destacado">
+        <span class="insignia">Más popular</span>
+        <h3>Profesional</h3>
+        <p class="precio"><strong>S/ 199</strong> / mes</p>
+        <ul><li>Hasta 5 páginas</li><li>Diseño personalizado</li><li>Soporte prioritario</li></ul>
+        <a href="#contacto" class="boton">Elegir plan</a>
+      </article>
+      <article class="plan">
+        <h3>Empresa</h3>
+        <p class="precio"><strong>S/ 399</strong> / mes</p>
+        <ul><li>Páginas ilimitadas</li><li>Integraciones a medida</li><li>Asesor dedicado</li></ul>
+        <a href="#contacto" class="boton contorno">Elegir plan</a>
+      </article>
+    </div>
+  </div>
+</section>`,
+    css: `.bq-precios{padding:80px 0}
+.bq-precios .cabecera{max-width:560px;margin:0 auto 48px;text-align:center}
+.bq-precios h2{font-size:clamp(1.7rem,3.5vw,2.4rem)}
+.bq-precios .cabecera p{margin-top:12px;color:var(--suave)}
+.bq-precios .rejilla{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:24px;align-items:stretch}
+.bq-precios .plan{position:relative;display:flex;flex-direction:column;gap:14px;padding:32px;background:var(--fondo);border:1px solid var(--linea);border-radius:calc(var(--radio) * 1.4)}
+.bq-precios .plan.destacado{border:2px solid var(--primario);box-shadow:0 18px 40px color-mix(in srgb,var(--primario) 22%,transparent)}
+.bq-precios .insignia{align-self:flex-start}
+.bq-precios .precio{color:var(--suave)}
+.bq-precios .precio strong{font-size:2.4rem;color:var(--texto)}
+.bq-precios ul{display:grid;gap:8px;flex:1;margin:0 0 10px;padding:0;list-style:none;color:var(--suave)}
+.bq-precios li::before{content:"✓ ";color:var(--primario);font-weight:700}
+.bq-precios .boton{text-align:center}`
+  },
+  {
+    id: 'equipo', nombre: 'Equipo', categoria: 'Contenido',
+    descripcion: 'Tres personas del equipo con avatar, nombre y cargo.',
+    etiquetas: ['personas', 'perfil', 'nosotros'], autor: 'Anthony', licencia: 'MIT',
+    html: `<section class="bq-equipo">
+  <div class="contenedor">
+    <h2>Conoce al equipo</h2>
+    <div class="rejilla">
+      <article class="persona"><div class="avatar">A</div><h3>Ana Torres</h3><p>Diseñadora UX</p></article>
+      <article class="persona"><div class="avatar">L</div><h3>Luis Paredes</h3><p>Desarrollador web</p></article>
+      <article class="persona"><div class="avatar">M</div><h3>María Salas</h3><p>Gestora de proyectos</p></article>
+    </div>
+  </div>
+</section>`,
+    css: `.bq-equipo{padding:80px 0;background:var(--tarjeta)}
+.bq-equipo h2{margin-bottom:44px;text-align:center;font-size:clamp(1.7rem,3.5vw,2.4rem)}
+.bq-equipo .rejilla{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:24px}
+.bq-equipo .persona{padding:30px 20px;text-align:center;background:var(--fondo);border:1px solid var(--linea);border-radius:calc(var(--radio) * 1.3)}
+.bq-equipo .avatar{display:grid;place-items:center;width:84px;height:84px;margin:0 auto 16px;border-radius:50%;background:linear-gradient(135deg,var(--primario),var(--secundario));color:#fff;font-size:2rem;font-weight:700}
+.bq-equipo h3{font-size:1.15rem}
+.bq-equipo .persona p{color:var(--suave)}`
+  },
+  {
+    id: 'faq', nombre: 'Preguntas frecuentes', categoria: 'Contenido',
+    descripcion: 'Acordeón de preguntas y respuestas hecho solo con HTML y CSS.',
+    etiquetas: ['faq', 'acordeón', 'desplegable'], autor: 'Anthony', licencia: 'MIT',
+    html: `<section class="bq-faq">
+  <div class="contenedor">
+    <h2>Preguntas frecuentes</h2>
+    <div class="lista">
+      <details open><summary>¿Cuánto tarda en estar lista mi página?</summary><p>Entre 5 y 10 días hábiles, según la cantidad de secciones.</p></details>
+      <details><summary>¿Puedo cambiar los textos después?</summary><p>Sí, puedes pedirnos cambios o editarlos tú mismo desde el código.</p></details>
+      <details><summary>¿Incluye dominio y alojamiento?</summary><p>Podemos gestionarlos por ti o publicar en el que ya tengas.</p></details>
+    </div>
+  </div>
+</section>`,
+    css: `.bq-faq{padding:80px 0}
+.bq-faq .contenedor{max-width:760px}
+.bq-faq h2{margin-bottom:36px;text-align:center;font-size:clamp(1.7rem,3.5vw,2.4rem)}
+.bq-faq .lista{display:grid;gap:12px}
+.bq-faq details{background:var(--tarjeta);border:1px solid var(--linea);border-radius:var(--radio);overflow:hidden}
+.bq-faq summary{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 22px;font-weight:600;cursor:pointer;list-style:none}
+.bq-faq summary::-webkit-details-marker{display:none}
+.bq-faq summary::after{content:"+";font-size:1.5rem;line-height:1;color:var(--primario);transition:transform .25s}
+.bq-faq details[open] summary::after{transform:rotate(45deg)}
+.bq-faq details p{padding:0 22px 20px;color:var(--suave)}`
+  },
+
+  /* ================= LLAMADAS A LA ACCIÓN ================= */
+  {
+    id: 'cta-banner', nombre: 'Banner de llamada a la acción', categoria: 'Llamadas a la acción',
+    descripcion: 'Recuadro llamativo con mensaje corto y un botón.',
+    etiquetas: ['cta', 'banner', 'botón'], autor: 'Anthony', licencia: 'MIT',
+    html: `<section class="bq-cta-banner">
+  <div class="contenedor">
+    <div class="caja">
+      <h2>¿Listo para empezar tu proyecto?</h2>
+      <p>Escríbenos hoy y recibe una cotización gratuita en menos de 24 horas.</p>
+      <a href="#contacto" class="boton claro">Pedir cotización</a>
+    </div>
+  </div>
+</section>`,
+    css: `.bq-cta-banner{padding:60px 0}
+.bq-cta-banner .caja{padding:56px 32px;text-align:center;color:#fff;border-radius:calc(var(--radio) * 2);background:linear-gradient(135deg,var(--primario),var(--secundario))}
+.bq-cta-banner h2{font-size:clamp(1.6rem,3.5vw,2.3rem)}
+.bq-cta-banner p{max-width:520px;margin:12px auto 26px;opacity:.92}`
+  },
+  {
+    id: 'botones', nombre: 'Fila de botones', categoria: 'Llamadas a la acción',
+    descripcion: 'Dos botones centrados, uno relleno y otro con contorno.',
+    etiquetas: ['botones', 'enlaces'], autor: 'Anthony', licencia: 'MIT',
+    html: `<div class="bq-botones">
+  <div class="contenedor fila">
+    <a href="#" class="boton">Botón principal</a>
+    <a href="#" class="boton contorno">Botón secundario</a>
+  </div>
+</div>`,
+    css: `.bq-botones{padding:32px 0}
+.bq-botones .fila{display:flex;flex-wrap:wrap;justify-content:center;gap:14px}`
+  },
+
+  /* ================= FORMULARIOS ================= */
+  {
+    id: 'contacto', nombre: 'Contacto con formulario', categoria: 'Formularios',
+    descripcion: 'Datos de contacto a un lado y formulario al otro.',
+    etiquetas: ['formulario', 'contacto', 'campos'], autor: 'Anthony', licencia: 'MIT',
+    html: `<section class="bq-contacto" id="contacto">
+  <div class="contenedor rejilla">
+    <div class="info">
+      <h2>Hablemos de tu proyecto</h2>
+      <p>Cuéntanos qué necesitas y te responderemos lo antes posible.</p>
+      <ul>
+        <li>📍 Arequipa, Perú</li>
+        <li>📧 contacto@mimarca.com</li>
+        <li>📞 +51 900 000 000</li>
+      </ul>
+    </div>
+    <form class="formulario" action="#" method="post">
+      <label>Nombre<input type="text" name="nombre" placeholder="Tu nombre" required></label>
+      <label>Correo electrónico<input type="email" name="correo" placeholder="tucorreo@ejemplo.com" required></label>
+      <label>Mensaje<textarea name="mensaje" rows="4" placeholder="Cuéntanos sobre tu proyecto" required></textarea></label>
+      <button type="submit" class="boton">Enviar mensaje</button>
+    </form>
+  </div>
+</section>`,
+    css: `.bq-contacto{padding:80px 0;background:var(--tarjeta)}
+.bq-contacto .rejilla{display:grid;grid-template-columns:1fr 1.1fr;gap:56px;align-items:start}
+.bq-contacto h2{font-size:clamp(1.7rem,3.5vw,2.3rem)}
+.bq-contacto .info p{margin:12px 0 24px;color:var(--suave)}
+.bq-contacto ul{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.bq-contacto .formulario{display:grid;gap:16px;padding:30px;background:var(--fondo);border:1px solid var(--linea);border-radius:calc(var(--radio) * 1.4)}
+.bq-contacto label{display:grid;gap:6px;font-size:.9rem;font-weight:600}
+.bq-contacto input,.bq-contacto textarea{width:100%;padding:12px 14px;border:2px solid var(--linea);border-radius:var(--radio);background:var(--fondo);color:var(--texto);font:inherit;font-weight:400;resize:vertical}
+.bq-contacto input:focus,.bq-contacto textarea:focus{outline:0;border-color:var(--primario)}
+@media (max-width:820px){.bq-contacto .rejilla{grid-template-columns:1fr;gap:32px}}`
+  },
+  {
+    id: 'suscripcion', nombre: 'Suscripción al boletín', categoria: 'Formularios',
+    descripcion: 'Campo de correo y botón en una sola línea.',
+    etiquetas: ['boletín', 'correo', 'newsletter'], autor: 'Anthony', licencia: 'MIT',
+    html: `<section class="bq-suscripcion">
+  <div class="contenedor">
+    <h2>Recibe novedades en tu correo</h2>
+    <p>Una vez al mes, sin spam. Puedes darte de baja cuando quieras.</p>
+    <form class="formulario" action="#" method="post">
+      <input type="email" name="correo" placeholder="tucorreo@ejemplo.com" required>
+      <button type="submit" class="boton">Suscribirme</button>
+    </form>
+  </div>
+</section>`,
+    css: `.bq-suscripcion{padding:70px 0;text-align:center}
+.bq-suscripcion h2{font-size:clamp(1.6rem,3.5vw,2.2rem)}
+.bq-suscripcion p{margin:10px 0 26px;color:var(--suave)}
+.bq-suscripcion .formulario{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;max-width:520px;margin:0 auto}
+.bq-suscripcion input{flex:1;min-width:220px;padding:12px 16px;border:2px solid var(--linea);border-radius:var(--radio);background:var(--fondo);color:var(--texto);font:inherit}
+.bq-suscripcion input:focus{outline:0;border-color:var(--primario)}`
+  },
+
+  /* ================= PIE DE PÁGINA ================= */
+  {
+    id: 'pie-pagina', nombre: 'Pie de página', categoria: 'Pie de página',
+    descripcion: 'Descripción de la marca, dos columnas de enlaces y derechos reservados.',
+    etiquetas: ['footer', 'enlaces', 'copyright'], autor: 'Anthony', licencia: 'MIT',
+    html: `<footer class="bq-pie-pagina">
+  <div class="contenedor">
+    <div class="rejilla">
+      <div class="marca"><strong>MiMarca</strong><p>Soluciones digitales para negocios que quieren crecer.</p></div>
+      <div class="columna"><h4>Empresa</h4><a href="#">Nosotros</a><a href="#">Servicios</a><a href="#">Contacto</a></div>
+      <div class="columna"><h4>Recursos</h4><a href="#">Blog</a><a href="#">Preguntas frecuentes</a><a href="#">Soporte</a></div>
+    </div>
+    <p class="derechos">© 2026 MiMarca. Todos los derechos reservados.</p>
+  </div>
+</footer>`,
+    css: `.bq-pie-pagina{padding:60px 0 28px;background:var(--texto);color:var(--fondo)}
+.bq-pie-pagina .rejilla{display:grid;grid-template-columns:2fr 1fr 1fr;gap:40px}
+.bq-pie-pagina .marca strong{font-size:1.4rem;color:var(--secundario)}
+.bq-pie-pagina .marca p{max-width:320px;margin-top:10px;opacity:.75}
+.bq-pie-pagina h4{margin-bottom:14px;font-size:.95rem;text-transform:uppercase;letter-spacing:.08em}
+.bq-pie-pagina .columna a{display:block;margin-bottom:8px;text-decoration:none;opacity:.75}
+.bq-pie-pagina .columna a:hover{opacity:1}
+.bq-pie-pagina .derechos{margin-top:40px;padding-top:22px;border-top:1px solid color-mix(in srgb,var(--fondo) 22%,transparent);font-size:.88rem;opacity:.65}
+@media (max-width:700px){.bq-pie-pagina .rejilla{grid-template-columns:1fr}}`
+  },
+
+  /* ================= BÁSICOS ================= */
+  {
+    id: 'titulo-seccion', nombre: 'Título de sección', categoria: 'Básicos',
+    descripcion: 'Un título con subtítulo centrados, para separar partes de la página.',
+    etiquetas: ['título', 'texto', 'encabezado'], autor: 'Anthony', licencia: 'MIT',
+    html: `<div class="bq-titulo-seccion">
+  <div class="contenedor">
+    <h2>Título de la sección</h2>
+    <p>Escribe aquí un breve subtítulo que explique de qué trata esta parte.</p>
+  </div>
+</div>`,
+    css: `.bq-titulo-seccion{padding:64px 0 24px;text-align:center}
+.bq-titulo-seccion h2{font-size:clamp(1.7rem,3.5vw,2.4rem)}
+.bq-titulo-seccion p{max-width:600px;margin:12px auto 0;color:var(--suave)}`
+  },
+  {
+    id: 'parrafo', nombre: 'Párrafo de texto', categoria: 'Básicos',
+    descripcion: 'Un bloque de texto con ancho cómodo para leer.',
+    etiquetas: ['texto', 'párrafo'], autor: 'Anthony', licencia: 'MIT',
+    html: `<section class="bq-parrafo">
+  <div class="contenedor">
+    <p>Escribe aquí tu texto. Haz doble clic sobre él en el lienzo para editarlo directamente, o usa el panel de propiedades para cambiar su tamaño, color y alineación.</p>
+  </div>
+</section>`,
+    css: `.bq-parrafo{padding:32px 0}
+.bq-parrafo .contenedor{max-width:760px}
+.bq-parrafo p{font-size:1.1rem;color:var(--suave)}`
+  },
+  {
+    id: 'imagen', nombre: 'Imagen ancha', categoria: 'Básicos',
+    descripcion: 'Una imagen a todo el ancho del contenedor.',
+    etiquetas: ['imagen', 'foto'], autor: 'Anthony', licencia: 'MIT',
+    html: `<section class="bq-imagen">
+  <div class="contenedor">
+    <img src="${img('#5b4bff', '#ff7a59', 1200, 500)}" alt="Imagen descriptiva">
+  </div>
+</section>`,
+    css: `.bq-imagen{padding:40px 0}
+.bq-imagen img{width:100%;aspect-ratio:12/5;object-fit:cover;border-radius:calc(var(--radio) * 1.5)}`
+  },
+  {
+    id: 'separador', nombre: 'Línea separadora', categoria: 'Básicos',
+    descripcion: 'Una línea fina para dividir secciones.',
+    etiquetas: ['línea', 'divisor'], autor: 'Anthony', licencia: 'MIT',
+    html: `<div class="bq-separador">
+  <div class="contenedor"><hr></div>
+</div>`,
+    css: `.bq-separador{padding:20px 0}
+.bq-separador hr{height:1px;margin:0;border:0;background:var(--linea)}`
+  },
+  {
+    id: 'espacio', nombre: 'Espacio en blanco', categoria: 'Básicos',
+    descripcion: 'Un hueco vertical. Selecciónalo y cambia su alto en las propiedades.',
+    etiquetas: ['espacio', 'separación'], autor: 'Anthony', licencia: 'MIT',
+    html: `<div class="bq-espacio"></div>`,
+    css: `.bq-espacio{height:80px}`
+  }
+
+  ];
+
+  BP.bloque = function (id) {
+    for (var i = 0; i < BP.bloques.length; i++) { if (BP.bloques[i].id === id) return BP.bloques[i]; }
+    return null;
+  };
+
+  BP.todoCSSBloques = function () {
+    return BP.bloques.map(function (b) { return b.css; }).join('\n');
+  };
+})();
